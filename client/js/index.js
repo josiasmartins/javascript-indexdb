@@ -35,3 +35,12 @@ document.querySelector('.form').addEventListener('submit', function(event) {
   campos[0].focus();
    
 });
+
+let re = /hi/;
+/**
+ * test: 
+ *  permite testar se uma string contém uma 
+ *  correspondência do padrão da expressão regular.
+*/
+let result = res.test('hi John');
+console.log(result) // true

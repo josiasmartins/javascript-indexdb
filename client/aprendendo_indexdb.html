@@ -7,17 +7,64 @@
     <title>Aprendendo IndexedDB</title>
 </head>
 <body>
+    <script src="js/app/models/Negociacao.js"></script>
     <script>
+
+        var connection;
 
         // open - primeiro: nome do database; segundo: nivel
         var openRequest = window.indexedDB.open('aluraframe', 1);
 
-        openRequest.onupgradeneeded = e => console.log('Cria ou altera um banco já existente');
+        openRequest.onupgradeneeded = e => {
 
-        openRequest.onsuccess = e => console.log(`Conexão obtida com sucesso`);
+            console.log('Cria ou altera um banco já existente');
+            
+            let minhaConnection = e.target.result;
 
-        openRequest.onerror = e => console.log(e.target.error);
-        
+            if (minhaConnection.objectStoreNames.contains('negociacoes')) {
+                minhaConnection.deleteObjectStore('negociacoes');
+            }
+
+            minhaConnection.createObjectStore('negociacoes', {autoIncrement: true});
+
+        };
+
+        openRequest.onsuccess = e => {
+            console.log(`Conexão obtida com sucesso`);
+
+            // result: IDDatabase
+            connection = e.target.result;
+        }
+        openRequest.onerror = e => {
+
+            console.log(e.target.error);
+        }
+
+        function adiciona() {
+
+            // transation: qual object store; segundo: qual o tipo
+            let transaction = connection.transaction(['negociacoes'], 'readwrite');
+
+            let store = transaction.objectStore('negociacoes');
+
+            let negociacao = new Negociacao(new Date(), 1, 200);
+
+            let request = store.add(negociacao);
+
+            request.onsuccess = e => {
+                console.log('Negociação incluida com sucesso')
+            }
+
+            request.onerror = e => {
+                console.log('Não foi possível incluir a negociação');
+            }
+
+
+        }
+
+        adiciona();
+
     </script>
+    
 </body>
 </html>
