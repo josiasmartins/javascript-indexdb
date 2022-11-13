@@ -13,7 +13,7 @@
         var connection;
 
         // open - primeiro: nome do database; segundo: nivel
-        var openRequest = window.indexedDB.open('aluraframe', 1);
+        var openRequest = window.indexedDB.open('aluraframe', 2);
 
         openRequest.onupgradeneeded = e => {
 
@@ -62,7 +62,40 @@
 
         }
 
-        adiciona();
+        function listaTodos() {
+            // transation: qual object store; segundo: qual o tipo
+            let transaction = connection.transaction(['negociacoes'], 'readwrite');
+
+            let store = transaction.objectStore('negociacoes');
+
+            // openCursor: dá um ponteiro para a primeira negocição
+            let cursor = store.openCursor();
+
+            let negociacoes = [];
+        
+            cursor.onsuccess = e => {
+
+                let atual = e.target.result;
+
+                if (atual) {
+                    let dado = atual.value;
+
+                    negociacoes.push(new Negociacao(dado._data, dado._quantidade, dado._valor));
+
+                    // continue: chama de novo o onsuccess
+                    atual.continue();
+                } else {
+
+                    console.log(negociacoes);
+
+                }
+            };
+
+            cursor.onerror = e => {
+
+                console.log(e.target.error.name)
+            }
+        }
 
     </script>
     
