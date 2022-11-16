@@ -1,0 +1,14 @@
+ConnectionFactory
+    .getConnection()
+    .then(connection => {
+
+        let dao = new NegociacaoDao(connection);
+        let negociacao = new Negociacao(new Date(), 1, 100);
+        dao.adiciona(negociacao).
+            then(() => {
+                /* faz alguma coisa */
+            })
+
+    });
+
+    DAO = Data Acess Object | visa abstrair os detalhes/complexidade de acessar um banco
