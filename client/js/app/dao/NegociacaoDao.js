@@ -27,4 +27,45 @@ class NegociacaoDao {
         });
     }
 
+    listaTodos() {
+
+        return new Promise((resolve, reject) => {
+            
+            // cursor: ele que sabe parsear pelos dados da store
+            let cursor = this.connection
+                .transaction([this._store], 'readwrite')
+                .objectStore(this._store)
+                .openCursor();
+
+            let negociacoes = [];
+
+            cursor.onsuccess = e => {
+
+                let atual = e.target.result;
+
+                if (atual) {
+
+
+                    let dado = atual.value;
+
+                    negociacoes.push(new Negociacao(dado._data, dado._quantidade, dado._valor));
+
+                    atual.continue();
+
+                } else {
+
+                    resolve(negociacoes);
+
+                }
+            };
+
+            cursor.onerror = e => {
+
+                console.log(e.target.error);
+                reject('Não poi possível obter as negociacoes');
+            }
+
+        })
+    }
+
 }

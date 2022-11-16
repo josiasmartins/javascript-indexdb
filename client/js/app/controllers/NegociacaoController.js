@@ -15,7 +15,17 @@ class NegociacaoController {
        
         this._mensagem = new Bind(
             new Mensagem(), new MensagemView($('#mensagemView')),
-            'texto');       
+            'texto'); 
+            
+        ConnectionFactory
+            .getConnection()
+            .then(connection => new NegociacaoDao(connection))
+            .then(negociacoes => {
+                negociacoes.forEach(negociacao => {
+
+                    this._listaNegociacoes.adiciona(negociacao);
+                })
+            })
     }
     
     adiciona(event) {
@@ -35,11 +45,6 @@ class NegociacaoController {
                     })
             })
             .catch(err => this._mensagem.texto = err);
-        
-        // event.preventDefault();
-        // this._listaNegociacoes.adiciona(this._criaNegociacao());
-        // this._mensagem.texto = 'Negociação adicionada com sucesso'; 
-        // this._limpaFormulario();   
     }
     
     importaNegociacoes() {
