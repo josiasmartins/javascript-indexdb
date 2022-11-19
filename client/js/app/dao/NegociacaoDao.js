@@ -28,11 +28,9 @@ class NegociacaoDao {
     }
 
     listaTodos() {
-
         return new Promise((resolve, reject) => {
-            
             // cursor: ele que sabe parsear pelos dados da store
-            let cursor = this.connection
+            let cursor = this._connection
                 .transaction([this._store], 'readwrite')
                 .objectStore(this._store)
                 .openCursor();
@@ -44,28 +42,37 @@ class NegociacaoDao {
                 let atual = e.target.result;
 
                 if (atual) {
-
-
                     let dado = atual.value;
-
                     negociacoes.push(new Negociacao(dado._data, dado._quantidade, dado._valor));
-
                     atual.continue();
-
                 } else {
-
                     resolve(negociacoes);
-
                 }
             };
-
             cursor.onerror = e => {
-
                 console.log(e.target.error);
                 reject('Não poi possível obter as negociacoes');
             }
 
         })
+    }
+
+    apagaTodos() {
+
+        return new Promise((resolve, reject) => {
+
+            let request = this._connection
+                .transaction([this._store], 'readwrite')
+                .objectStore(this._store)
+                .clear();
+
+            request.onsuccess = e => resolve('Negociações apagadas com sucesso');
+
+            request.onerror = e => {
+                console.log(e);
+                reject('Não foi possível remover as negociaçoes');
+            }
+        });
     }
 
 }
