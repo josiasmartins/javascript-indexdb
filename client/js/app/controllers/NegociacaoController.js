@@ -56,15 +56,7 @@ class NegociacaoController {
     importaNegociacoes() {
         
         this._service
-            .obterNegociacoes()
-            .then(negociacoes => 
-                // filter: percore cada iten da negociação e vai jogar dentro de negociação
-                negociacoes.filter(negociacao => 
-                    // some: verifica de cada iten existente é igual a negociacao que estou filtrando...se for, retorne true
-                    !this._listaNegociacoes.negociacoes.some(negociacaoExistente => 
-                        JSON.stringify(negociacao) == JSON.stringify(negociacaoExistente))
-                )
-            )
+            .importa(this._listaNegociacoes.negociacoes)
             .then(negociacoes => negociacoes.forEach(negociacao => {
                 this._listaNegociacoes.adiciona(negociacao);
                 this._mensagem.texto = 'Negociações do período importadas'   
@@ -98,5 +90,16 @@ class NegociacaoController {
         this._inputQuantidade.value = 1;
         this._inputValor.value = 0.0;
         this._inputData.focus();   
+    }
+
+    ordena(coluna) {
+        
+        if (this._ordenaAtual == coluna) {
+            this._listaNegociacoes.inverteOrdem();
+        } else {
+            this._listaNegociacoes.ordena((p, s) => p[coluna] - s[coluna])
+        }
+
+        this._ordenaAtual = coluna;
     }
 }
