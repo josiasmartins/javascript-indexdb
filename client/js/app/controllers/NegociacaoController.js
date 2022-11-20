@@ -17,27 +17,24 @@ class NegociacaoController {
             new Mensagem(), new MensagemView($('#mensagemView')),
             'texto'); 
 
+        this._service = new NegociacaoService();
+
         this._init();
             
         }
         
         _init() {
             
-            ConnectionFactory
-                .getConnection()
-                .then(connection => new NegociacaoDao(connection))
-                .then(dao => dao.listaTodos())
-                .then(negociacoes => {
-                    negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao))
-                })
-                .catch(err => {
-                    console.log(err);
-                    this._mensagem.texto = err;
-                });
+            this._service
+                .lista()
+                .then(negociacoes => 
+                    negociacoes.forEach(negociacao => 
+                        this._listaNegociacoes.adiciona(negociacao)))
+                .catch(erro => this._mensagem.texto = erro);
     
             setInterval(() => {
                 this.importaNegociacoes();
-            }, 300);
+            }, 3000);
     }
     
     adiciona(event) {
@@ -46,7 +43,7 @@ class NegociacaoController {
 
         let negociacao = this._criaNegociacao();
 
-        new NegociacaoService()
+        this._service
             .cadastra(negociacao)
             .then(mensagem => {
                 this._listaNegociacoes.adiciona(negociacao);
@@ -58,8 +55,7 @@ class NegociacaoController {
     
     importaNegociacoes() {
         
-        let service = new NegociacaoService();
-        service
+        this._service
             .obterNegociacoes()
             .then(negociacoes => 
                 // filter: percore cada iten da negociação e vai jogar dentro de negociação
@@ -78,14 +74,13 @@ class NegociacaoController {
     
     apaga() {
 
-        ConnectionFactory
-            .getConnection()
-            .then(connection => new NegociacaoDao(connection))
-            .then(dao => dao.apagaTodos())
+        this._service
+            .apaga()
             .then(mensagem => {
                 this._mensagem.texto = mensagem;
                 this._listaNegociacoes.esvazia();
             })
+            .catch(error => this._mensagem.texto = error);
 
     }
     

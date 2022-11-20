@@ -86,8 +86,34 @@ class NegociacaoService {
             .then(connection => new NegociacaoDao(connection))
             .then(dao => dao.adiciona(negociacao))
             .then(() => 'Negociação adicionado com sucesso')
-            .catch(() => {
+            .catch(err => {
+                console.log(err);
                 throw new Error('Não foi possível adicionar a negociação');
             });
+    }
+
+    lista() {
+
+        return ConnectionFactory
+            .getConnection()
+            .then(connection => new NegociacaoDao(connection))
+            .then(dao => dao.listaTodos())
+            .catch(err => {
+                console.log(err);
+                throw new Error('Não foi possível obter as negociações')
+            })
+    }
+
+    apaga() {
+
+        return ConnectionFactory
+            .getConnection()
+            .then(connection => new NegociacaoDao(connection))
+            .then(dao => dao.apagaTodos())
+            .then(() => 'Negociaçoes apagadas com sucesso')
+            .catch(erro => {
+                console.log(erro);
+                throw new Error('Não foi possível apagar as negociações');
+            })
     }
 }
