@@ -14,6 +14,13 @@ class HttpService {
 
     post(url, dado) {
 
+        return fetch(url, {
+            headers: {'Content-type' : 'application/json'},
+            method: 'post',
+            body: JSON.stringify(dado)
+        })
+        .then(res => this._handleErrors(res));
+
         return new Promise((resolve, reject) => {
 
             let xhr = new XMLHttpRequest();
