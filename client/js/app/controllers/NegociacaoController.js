@@ -51,10 +51,17 @@ class NegociacaoController {
     
     importaNegociacoes() {
         
-        
         let service = new NegociacaoService();
         service
             .obterNegociacoes()
+            .then(negociacoes => 
+                // filter: percore cada iten da negociação e vai jogar dentro de negociação
+                negociacoes.filter(negociacao => 
+                    // some: verifica de cada iten existente é igual a negociacao que estou filtrando...se for, retorne true
+                    !this._listaNegociacoes.negociacoes.some(negociacaoExistente => 
+                        JSON.stringify(negociacao) == JSON.stringify(negociacaoExistente))
+                )
+            )
             .then(negociacoes => negociacoes.forEach(negociacao => {
                 this._listaNegociacoes.adiciona(negociacao);
                 this._mensagem.texto = 'Negociações do período importadas'   
