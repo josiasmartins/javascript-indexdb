@@ -13,6 +13,8 @@ var _ConnectorFactory = require('./ConnectorFactory');
 
 var _NegociacaoDao = require('../dao/NegociacaoDao');
 
+var _Negociacao = require('../models/Negociacao');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var NegociacaoService = exports.NegociacaoService = function () {
@@ -32,7 +34,7 @@ var NegociacaoService = exports.NegociacaoService = function () {
                 _this._http.get('negociacoes/semana').then(function (negociacoes) {
                     console.log(negociacoes);
                     resolve(negociacoes.map(function (objeto) {
-                        return new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor);
+                        return new _Negociacao.Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor);
                     }));
                 }).catch(function (erro) {
                     console.log(erro);
@@ -50,7 +52,7 @@ var NegociacaoService = exports.NegociacaoService = function () {
                 _this2._http.get('negociacoes/anterior').then(function (negociacoes) {
                     console.log(negociacoes);
                     resolve(negociacoes.map(function (objeto) {
-                        return new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor);
+                        return new _Negociacao.Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor);
                     }));
                 }).catch(function (erro) {
                     console.log(erro);
@@ -68,7 +70,7 @@ var NegociacaoService = exports.NegociacaoService = function () {
                 _this3._http.get('negociacoes/retrasada').then(function (negociacoes) {
                     console.log(negociacoes);
                     resolve(negociacoes.map(function (objeto) {
-                        return new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor);
+                        return new _Negociacao.Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor);
                     }));
                 }).catch(function (erro) {
                     console.log(erro);
@@ -88,7 +90,7 @@ var NegociacaoService = exports.NegociacaoService = function () {
                     var negociacoes = periodos.reduce(function (dados, periodo) {
                         return dados.concat(periodo);
                     }, []).map(function (dado) {
-                        return new Negociacao(new Date(dado.data), dado.quantidade, dado.valor);
+                        return new _Negociacao.Negociacao(new Date(dado.data), dado.quantidade, dado.valor);
                     });
 
                     resolve(negociacoes);
