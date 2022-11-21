@@ -1,78 +1,90 @@
-class NegociacaoDao {
+'use strict';
 
-    constructor(connection) {
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var NegociacaoDao = function () {
+    function NegociacaoDao(connection) {
+        _classCallCheck(this, NegociacaoDao);
+
         // quarda essa conexão nessa variavel
         this._connection = connection;
         this._store = 'negociacoes';
     }
 
-    adiciona(negociacao) {
-        return new Promise((resolve, reject) => {
-            // outra forma de fazer através da promise
-            let request = this._connection 
-                .transaction([this._store], 'readwrite') // abra um transação do tipo leiturea e escrita
-                .objectStore(this._store) // pega um objeto dessa transação
+    _createClass(NegociacaoDao, [{
+        key: 'adiciona',
+        value: function adiciona(negociacao) {
+            var _this = this;
+
+            return new Promise(function (resolve, reject) {
+                // outra forma de fazer através da promise
+                var request = _this._connection.transaction([_this._store], 'readwrite') // abra um transação do tipo leiturea e escrita
+                .objectStore(_this._store) // pega um objeto dessa transação
                 .add(negociacao); // add minha negociacao
 
-            // eventos
-            request.onsuccess = e => {
-                resolve();
-            };
+                // eventos
+                request.onsuccess = function (e) {
+                    resolve();
+                };
 
-            request.onerror = e => {
-                console.log(e.target.error);
-                reject('não foi possível adicionar a negociação')
-            };
+                request.onerror = function (e) {
+                    console.log(e.target.error);
+                    reject('não foi possível adicionar a negociação');
+                };
+            });
+        }
+    }, {
+        key: 'listaTodos',
+        value: function listaTodos() {
+            var _this2 = this;
 
-        });
-    }
+            return new Promise(function (resolve, reject) {
+                // cursor: ele que sabe parsear pelos dados da store
+                var cursor = _this2._connection.transaction([_this2._store], 'readwrite').objectStore(_this2._store).openCursor();
 
-    listaTodos() {
-        return new Promise((resolve, reject) => {
-            // cursor: ele que sabe parsear pelos dados da store
-            let cursor = this._connection
-                .transaction([this._store], 'readwrite')
-                .objectStore(this._store)
-                .openCursor();
+                var negociacoes = [];
 
-            let negociacoes = [];
+                cursor.onsuccess = function (e) {
 
-            cursor.onsuccess = e => {
+                    var atual = e.target.result;
 
-                let atual = e.target.result;
+                    if (atual) {
+                        var dado = atual.value;
+                        negociacoes.push(new Negociacao(dado._data, dado._quantidade, dado._valor));
+                        atual.continue();
+                    } else {
+                        resolve(negociacoes);
+                    }
+                };
+                cursor.onerror = function (e) {
+                    console.log(e.target.error);
+                    reject('Não poi possível obter as negociacoes');
+                };
+            });
+        }
+    }, {
+        key: 'apagaTodos',
+        value: function apagaTodos() {
+            var _this3 = this;
 
-                if (atual) {
-                    let dado = atual.value;
-                    negociacoes.push(new Negociacao(dado._data, dado._quantidade, dado._valor));
-                    atual.continue();
-                } else {
-                    resolve(negociacoes);
-                }
-            };
-            cursor.onerror = e => {
-                console.log(e.target.error);
-                reject('Não poi possível obter as negociacoes');
-            }
+            return new Promise(function (resolve, reject) {
 
-        })
-    }
+                var request = _this3._connection.transaction([_this3._store], 'readwrite').objectStore(_this3._store).clear();
 
-    apagaTodos() {
+                request.onsuccess = function (e) {
+                    return resolve('Negociações apagadas com sucesso');
+                };
 
-        return new Promise((resolve, reject) => {
+                request.onerror = function (e) {
+                    console.log(e);
+                    reject('Não foi possível remover as negociaçoes');
+                };
+            });
+        }
+    }]);
 
-            let request = this._connection
-                .transaction([this._store], 'readwrite')
-                .objectStore(this._store)
-                .clear();
-
-            request.onsuccess = e => resolve('Negociações apagadas com sucesso');
-
-            request.onerror = e => {
-                console.log(e);
-                reject('Não foi possível remover as negociaçoes');
-            }
-        });
-    }
-
-}
+    return NegociacaoDao;
+}();
+//# sourceMappingURL=NegociacaoDao.js.map
