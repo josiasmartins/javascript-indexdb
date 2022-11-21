@@ -7,7 +7,7 @@ import { DateHelper } from '../helpers/DateHelper';
 import { Bind } from '../helpers/Bind';
 import { Negociacao } from '../models/Negociacao';
 
-export class NegociacaoController {
+class NegociacaoController {
     
     constructor() {
         
@@ -20,11 +20,13 @@ export class NegociacaoController {
         this._listaNegociacoes = new Bind(
             new ListaNegociacoes(), 
             new NegociacoesView($('#negociacoesView')), 
-            'adiciona', 'esvazia');
+            'adiciona', 'esvazia', 'ordena', 'inverteOrdem');
        
         this._mensagem = new Bind(
             new Mensagem(), new MensagemView($('#mensagemView')),
             'texto'); 
+
+        this._ordemAtual = '';
 
         this._service = new NegociacaoService();
 
@@ -111,4 +113,11 @@ export class NegociacaoController {
 
         this._ordenaAtual = coluna;
     }
+}
+
+let negociacaoController = new NegociacaoController();
+
+export function currentInstance() {
+
+    return negociacaoController;
 }
