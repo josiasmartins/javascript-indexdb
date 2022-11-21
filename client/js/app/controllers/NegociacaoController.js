@@ -76,7 +76,7 @@ var NegociacaoController = function () {
         value: function apaga() {
             var _this4 = this;
 
-            this._servicex.apaga().then(function (mensagem) {
+            this._service.apaga().then(function (mensagem) {
                 _this4._mensagem.texto = mensagem;
                 _this4._listaNegociacoes.esvazia();
             }).catch(function (error) {
