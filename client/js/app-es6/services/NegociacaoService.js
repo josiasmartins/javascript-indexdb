@@ -1,4 +1,6 @@
 import { HttpService } from './HttpService';
+import { ConnectionFactory } from './ConnectorFactory';
+import { NegociacaoDao } from '../dao/NegociacaoDao';
 
 export class NegociacaoService {
     
